@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "lib": ["ES2020"]
   },
   "include": ["lib/**/*.ts"]
 }
