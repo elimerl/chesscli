@@ -57,6 +57,7 @@ io.on("connection", (socket: socketio.Socket) => {
     if ((chess.turn() === socket.turn) === "w" ? "b" : "w") {
       if (chess.game_over()) {
         io.to(getGameID(socket)).emit("game-over", chess.fen());
+        games.delete(getGameID(socket));
       } else {
         games.get(getGameID(socket)).load(fen);
         io.to(getGameID(socket)).emit(
@@ -64,6 +65,16 @@ io.on("connection", (socket: socketio.Socket) => {
           games.get(getGameID(socket)).fen()
         );
       }
+    }
+  });
+  socket.on("disconnecting", () => {
+    const game = getGameID(socket);
+    if (io.to(game).sockets.sockets.size - 1 === 1) {
+      games.delete(game);
+      io.to(game).sockets.sockets.forEach(s => {
+        s.leave(game);
+        s.emit("left", "A player has disconnected from your game.");
+      });
     }
   });
 });

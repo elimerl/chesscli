@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 "use strict";
-import { Chess } from "chess.js";
+import { Chess, ChessInstance } from "chess.js";
 import { createInterface } from "readline";
 import fetch from "node-fetch";
 const socket: Socket = require("socket.io-client")("http://localhost:3000");
@@ -35,10 +35,11 @@ if (process.argv[2]) {
       });
     });
 }
-let side;
+let side, game;
 socket.on("joined", (id, s) => {
   console.log("connected to game " + id);
   side = s;
+  game = id;
 });
 socket.on("start", fen => {
   const chess = new Chess(fen);
@@ -53,9 +54,17 @@ socket.on("start", fen => {
 socket.on("game-over", fen => {
   const chess = new Chess(fen);
   if (chess.in_checkmate()) {
-    console.log(chess.turn() === "w" ? "b" : "w" + " has won");
+    console.log((chess.turn() === "w" ? "b" : "w") + " has won");
     socket.disconnect();
   }
+});
+socket.on("disconnect", () => {
+  console.log("disconnected from server");
+  process.exit();
+});
+socket.on("left", reason => {
+  console.log(reason);
+  process.exit(0);
 });
 function askMove(chess) {
   const p = prompt([
@@ -80,7 +89,7 @@ function setCharAt(str, index, chr) {
   if (index > str.length - 1) return str;
   return str.substring(0, index) + chr + str.substring(index + 1);
 }
-function showChess(chess) {
+function showChess(chess: ChessInstance) {
   const rowNames = "abcdefgh";
   const s = "-----------------------------------------";
   let seperator = s;
@@ -94,7 +103,7 @@ function showChess(chess) {
     let rowStr = ``;
     console.log("  " + "-".repeat(41));
 
-    row.forEach(piece => {
+    row.forEach((piece, j) => {
       rowStr += "  | ";
       if (piece === null) {
         rowStr += " ";
