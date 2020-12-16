@@ -36,7 +36,6 @@ io.on("connection", (socket: socketio.Socket) => {
           id,
           "wb".charAt(io.to(id).sockets.sockets.size - 1)
         );
-        console.log(io.to(id).sockets.sockets.size);
         //@ts-expect-error
         socket.turn = "b";
       }
@@ -49,7 +48,6 @@ io.on("connection", (socket: socketio.Socket) => {
   });
   socket.on("moved", fen => {
     const chess = new Chess(fen);
-    console.log(chess.ascii());
     //@ts-expect-error
     if ((chess.turn() === socket.turn) === "w" ? "b" : "w") {
       if (chess.game_over()) {
