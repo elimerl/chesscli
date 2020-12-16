@@ -17,13 +17,14 @@
   "devDependencies": {
     "coveralls": "^3.0.7",
     "eslint": "^6.6.0",
-    "prettier": "^1.19.1",
-    "husky": "^3.0.9",
-    "lint-staged": "^9.4.3",
     "eslint-config-prettier": "^6.6.0",
-    "eslint-plugin-prettier": "^3.1.1",
     "eslint-config-xo": "^0.27.2",
-    "jest": "^26.1.0"
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "jest": "^26.1.0",
+    "lint-staged": "^9.4.3",
+    "prettier": "^1.19.1",
+    "ts-node-dev": "^1.1.1"
   },
   "engines": {
     "npm": ">= 4.0.0"
@@ -61,10 +62,18 @@
   },
   "scripts": {
     "pretest": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "dev": "ts-node-dev lib/server.ts",
+    "start": "tsc && node dist/server.js"
   },
   "jest": {
     "testEnvironment": "node"
   },
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "dependencies": {
+    "chess.js": "^0.11.0",
+    "nanoid": "^3.1.20",
+    "socket.io": "^3.0.4",
+    "socket.io-client": "^3.0.4"
+  }
 }
