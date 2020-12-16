@@ -3,8 +3,10 @@
 import { customAlphabet, nanoid } from "nanoid";
 import * as socketio from "socket.io";
 import { createServer } from "http";
-
+import { parse } from "yaml";
 import { Chess, ChessInstance } from "chess.js";
+import { readFileSync } from "fs";
+import { resolve } from "path";
 const games: Map<string, ChessInstance> = new Map();
 const server = createServer((req, res) => {
   if (req.url === "/games") {
@@ -13,7 +15,10 @@ const server = createServer((req, res) => {
   }
 });
 const io: socketio.Server = require("socket.io")(server);
-server.listen(3000);
+const config = parse(
+  readFileSync(resolve(__dirname, "../server.yml"), "utf-8")
+);
+server.listen(config.port);
 console.log("server up on localhost:3000");
 io.on("connection", (socket: socketio.Socket) => {
   let game = "";
